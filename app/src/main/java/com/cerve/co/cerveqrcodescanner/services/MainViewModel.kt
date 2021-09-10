@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     }
 
-    fun setScannerStateAndBarcodeValue(newState: ScannerState, newBarcodeValue: String?) {
+    fun setScannerStateAndBarcodeValue(newState: ScannerState, newBarcodeValue: String) {
         setScannerState(newState)
         setBarcodeValue(newBarcodeValue)
     }

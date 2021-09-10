@@ -1,22 +1,19 @@
 package com.cerve.co.cerveqrcodescanner.services
 
-import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.core.graphics.toRectF
 import com.cerve.co.cerveqrcodescanner.Utils.logIt
 import com.cerve.co.cerveqrcodescanner.models.ScannerState
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
-import java.sql.Struct
 
 class BarcodeAnalyzer(
-    private val actionSetBarcodeValueAndState: ((ScannerState, String?) -> Unit)? = null,
-    var scannerBoundingBox: RectF? = null
+    val actionScannerLoadingResults: ((ScannerState, String) -> Unit)? = null,
+    val scannerBoundingBox: RectF? = null
 ): ImageAnalysis.Analyzer {
 
 
@@ -34,15 +31,17 @@ class BarcodeAnalyzer(
                 .addOnCompleteListener { task ->
 
                     if (task.isSuccessful) {
-                        RectF()
-                        val barcodeInCenter = task.result.firstOrNull { barcode ->
 
-                            val barcodeBoundingBox = barcode?.boundingBox?.toRectF() ?: return@firstOrNull false
-                            val box = scannerBoundingBox ?: return@firstOrNull false
+                        Log.d("Utility", "task $task")
 
-                            box.intersect(barcodeBoundingBox)
-
-                        }
+//                        val barcodeInCenter = task.result.firstOrNull { barcode ->
+//
+//                            val barcodeBoundingBox = barcode?.boundingBox?.toRectF() ?: return@firstOrNull false
+//                            val box = scannerBoundingBox ?: return@firstOrNull false
+//
+//                            box.intersect(barcodeBoundingBox)
+//
+//                        }
 
                         /**
                          * When the successListener fires it means that the barcode is in view of the camera.
@@ -50,37 +49,37 @@ class BarcodeAnalyzer(
                          * within a centered 3x2 grid.
                          */
 
-                        if (barcodeInCenter != null) {
-
-                            /***
-                             * The developer may have specific requirements for a barcode a user
-                             * will be scanning.
-                             *
-                             * Logic for these requirements can be entered below.
-                             */
-                            when(barcodeInCenter.rawValue) {
-
-                                is String -> {
-                                    "valid ${barcodeInCenter.rawValue}".logIt("BarcodeAnalyzer")
-                                    scanner.stop()
-                                    actionSetBarcodeValueAndState?.let { action ->
-                                        action(ScannerState.LOADING, barcodeInCenter.rawValue)
-                                    }
-                                }
-
-                                else -> {
-
-                                    /***
-                                     * Ignore invalid Qr-codes
-                                     */
-
-                                    "ignore ${barcodeInCenter.rawValue}".logIt("BarcodeAnalyzer")
-
-                                }
-
-
-                            }
-                        }
+//                        if (barcodeInCenter != null) {
+//
+//                            /***
+//                             * The developer may have specific requirements for a barcode a user
+//                             * will be scanning.
+//                             *
+//                             * Logic for these requirements can be entered below.
+//                             */
+//                            when(barcodeInCenter.rawValue) {
+//
+//                                is String -> {
+//                                    logIt("BarcodeAnalyzer")
+//                                    scanner.stop()
+//                                    actionSetBarcodeValueAndState?.let {
+//                                        it(ScannerState.LOADING, barcodeInCenter.rawValue)
+//                                    }
+//                                }
+//
+//                                else -> {
+//
+//                                    /***
+//                                     * Ignore invalid Qr-codes
+//                                     */
+//
+//                                    logIt("BarcodeAnalyzer")
+//
+//                                }
+//
+//
+//                            }
+//                        }
 
                     }
 
@@ -101,7 +100,7 @@ class BarcodeAnalyzer(
             try {
                 this.close()
             } catch (e: Exception) {
-                "scanner $this | stop error: ${e.message}".logIt("MLKitBarcodeAnalyzer")
+                logIt("MLKitBarcodeAnalyzer")
             }
         }
 

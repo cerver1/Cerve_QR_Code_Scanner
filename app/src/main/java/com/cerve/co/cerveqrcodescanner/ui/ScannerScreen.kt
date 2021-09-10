@@ -19,7 +19,6 @@ import com.cerve.co.cerveqrcodescanner.ui.components.DefaultTopAppBar
 import com.cerve.co.cerveqrcodescanner.ui.theme.CerveQRCodeScannerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 
 @ExperimentalAnimationApi
@@ -30,17 +29,16 @@ fun ScanQrCodeScreen(
     actionRequestCameraAndLocationPermission: ((MultiplePermissionsState) -> Unit)? = null,
     actionScanBarcode: (() -> Unit)? = null,
     actionScanBarcodeSuccess: (() -> Unit)? = null,
-    actionScannerLoadingResults: ((ScannerState, String?) -> Unit)? = null,
+    actionScannerLoadingResults: ((ScannerState, String) -> Unit)? = null,
     actionNavigateToSelectFromList: (() -> Unit)? = null,
     actionNavigateHome: (() -> Unit)? = null,
 ) {
 
-    var doNotShowRationale by rememberSaveable { mutableStateOf(false) }
+    val doNotShowRationale by rememberSaveable { mutableStateOf(false) }
 
     val cameraPermissionState = rememberPermissionState(
         permission = Manifest.permission.CAMERA
     )
-
 
     Scaffold(
         topBar = {
@@ -49,50 +47,31 @@ fun ScanQrCodeScreen(
         modifier = Modifier.defaultMinSize()
     ) { innerPadding ->
 
-        var layoutSize by remember {
-            mutableStateOf(IntSize.Zero)
-        }
-        val modifier = remember {
-            mutableStateOf(
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .onGloballyPositioned { coordinates ->
-                        layoutSize = coordinates.size
-                    }
-            )
-        }
-
         when {
             cameraPermissionState.hasPermission -> {
 
                 DefaultCameraPreview(
-                    modifier = modifier.value,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
                     actionScannerLoadingResults = actionScannerLoadingResults
 
                 )
 
-
             }
+
             (cameraPermissionState.shouldShowRationale ||
                     !cameraPermissionState.permissionRequested) -> {
 
                 if (doNotShowRationale) {
-                    //TODO "Feature not available"
+                    //TODO feature not available screen
                 } else {
 
                     LaunchedEffect(Unit) {
                         cameraPermissionState.launchPermissionRequest()
                     }
 
-                    //TODO
-//                    PermissionRationaleBox(
-//                        modifier = Modifier.padding(innerPadding),
-//                        ActionRequestPermission = {
-//                            cameraAndLocationPermissionState.launchMultiplePermissionRequest()
-//                        },
-////                    ActionIgnorePermission = { doNotShowRationale = true /** Navigate to select from list */ }
-//                    )
+                    //TODO rationale screen
 
                 }
 

@@ -2,10 +2,10 @@ package com.cerve.co.cerveqrcodescanner
 
 
 
-import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Log
 import androidx.camera.core.AspectRatio
+import androidx.camera.view.PreviewView
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
@@ -19,7 +19,7 @@ object Utils {
     private const val RATIO_4_3_VALUE = 4.0 / 3.0
     private const val RATIO_16_9_VALUE = 16.0 / 9.0
 
-    fun String.logIt(function: String) {
+    fun logIt(function: String) {
 //        val thread = "thread ${Thread.currentThread().name}"
 //        Timber.d("$thread | $function : $this")
     }
@@ -41,11 +41,22 @@ object Utils {
 
     }
 
+    fun PreviewView?.toIntSize() : IntSize {
+        return this?.let {
+
+            IntSize(this.width, this.height)
+
+        } ?: IntSize.Zero
+
+    }
+
+
     fun IntSize?.retrieveBoxRect(size: Size): RectF {
 
         return this?.let {
 
             val (canvasWidth, canvasHeight) = this
+
             val (boxWidth, boxHeight) = size
 
             val leftB = ((canvasWidth - boxWidth) / 2)
