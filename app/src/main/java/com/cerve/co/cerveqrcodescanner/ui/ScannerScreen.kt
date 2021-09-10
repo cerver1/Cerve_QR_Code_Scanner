@@ -81,7 +81,7 @@ fun ScanQrCodeScreen(
 
                     AnimatedVisibility(
                         modifier = Modifier.align(Alignment.BottomCenter),
-                        visible = true,//currentScannerState == ScannerState.COMPLETE,
+                        visible = currentScannerState == ScannerState.COMPLETE,
                         enter = slideInVertically(
                             // Enters by sliding in from offset -fullHeight to 0.
                             initialOffsetY = { fullHeight -> fullHeight },
