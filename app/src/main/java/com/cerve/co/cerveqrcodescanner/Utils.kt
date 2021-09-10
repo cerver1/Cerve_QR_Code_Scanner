@@ -1,7 +1,5 @@
 package com.cerve.co.cerveqrcodescanner
 
-
-
 import android.graphics.RectF
 import android.util.Log
 import androidx.camera.core.AspectRatio
@@ -10,6 +8,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.google.mlkit.vision.barcode.BarcodeScanner
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -24,6 +23,16 @@ object Utils {
 //        Timber.d("$thread | $function : $this")
     }
 
+    fun BarcodeScanner?.stopScanner() {
+        if (this != null) {
+            try {
+                this.close()
+            } catch (e: Exception) {
+                logIt("MLKitBarcodeAnalyzer")
+            }
+        }
+
+    }
     fun aspectRatio(width: Int, height: Int): Int {
         val previewRatio = max(width, height).toDouble() / min(width, height)
         if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {

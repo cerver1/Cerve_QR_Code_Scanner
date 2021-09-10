@@ -126,7 +126,6 @@ private fun bindPreview(
         .build()
         .also { analyzer ->
 
-
             analyzer.setAnalyzer(
                 cameraExecutor,
                 BarcodeAnalyzer(

@@ -6,9 +6,8 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.core.graphics.toRectF
-import com.cerve.co.cerveqrcodescanner.Utils.logIt
+import com.cerve.co.cerveqrcodescanner.Utils.stopScanner
 import com.cerve.co.cerveqrcodescanner.models.ScannerState
-import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 
@@ -17,8 +16,8 @@ class BarcodeAnalyzer(
     val scannerBoundingBox: RectF? = null
 ): ImageAnalysis.Analyzer {
 
-
     private val scanner = BarcodeScanning.getClient()
+
     @ExperimentalGetImage
     override fun analyze(imageProxy: ImageProxy) {
 
@@ -28,7 +27,8 @@ class BarcodeAnalyzer(
 
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
-            scanner.process(image)
+            scanner
+                .process(image)
                 .addOnCompleteListener { task ->
 
                     if (task.isSuccessful) {
@@ -49,35 +49,35 @@ class BarcodeAnalyzer(
                          */
 
                         if (barcodeInCenter != null) {
-                            Log.d("Utility", "barcodeInCenter $barcodeInCenter")
                             /***
                              * The developer may have specific requirements for a barcode a user
                              * will be scanning.
                              *
                              * Logic for these requirements can be entered below.
+                             * [is String is only being used as a possible requirement for the barcode]
                              */
-//                            when(barcodeInCenter.rawValue) {
-//
-//                                is String -> {
-//                                    logIt("BarcodeAnalyzer")
-//                                    scanner.stop()
-//                                    actionSetBarcodeValueAndState?.let {
-//                                        it(ScannerState.LOADING, barcodeInCenter.rawValue)
-//                                    }
-//                                }
-//
-//                                else -> {
-//
-//                                    /***
-//                                     * Ignore invalid Qr-codes
-//                                     */
-//
-//                                    logIt("BarcodeAnalyzer")
-//
-//                                }
-//
-//
-//                            }
+                            val barcodeInCenterRaw = barcodeInCenter.rawValue
+
+                            when(barcodeInCenterRaw) {
+                                is String -> {
+                                    Log.d("Utility", "valid barcodeInCenter $barcodeInCenterRaw")
+                                    scanner.stopScanner()
+                                    actionScannerLoadingResults?.let { action ->
+                                        action(ScannerState.LOADING, barcodeInCenterRaw)
+                                    }
+                                }
+
+                                else -> {
+
+                                    /***
+                                     * Ignore invalid Qr-codes
+                                     */
+
+                                    Log.d("Utility", "invalid barcodeInCenter $barcodeInCenterRaw")
+                                }
+
+                            }
+
                         }
 
                     }
@@ -86,22 +86,9 @@ class BarcodeAnalyzer(
                      *  [imageProxy.close()] is required for continued processing of each image
                      */
                     imageProxy.close()
-
                 }
-
         }
 
     }
 
-
-    private fun BarcodeScanner?.stop() {
-        if (this != null) {
-            try {
-                this.close()
-            } catch (e: Exception) {
-                logIt("MLKitBarcodeAnalyzer")
-            }
-        }
-
-    }
 }
