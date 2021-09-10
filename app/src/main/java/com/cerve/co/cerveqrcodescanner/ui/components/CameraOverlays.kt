@@ -26,8 +26,8 @@ import com.cerve.co.cerveqrcodescanner.ui.theme.reticuleRipple
 @Composable
 fun SurfaceViewOverlay(
     modifier: Modifier,
-//    analyzer: ImageAnalysis.Analyzer? = null,
-    scannerState: ScannerState = ScannerState.SCANNING
+    currentScannerState: ScannerState? = null,
+    actionSetScannerCompletionState: ((ScannerState) -> Unit)? = null
 ){
 
     val animatedProgress = remember { Animatable(1f) }
@@ -56,19 +56,24 @@ fun SurfaceViewOverlay(
         )
     )
 
-    LaunchedEffect(scannerState) {
+    LaunchedEffect(currentScannerState) {
 
-        if(scannerState == ScannerState.LOADING) {
+        if(currentScannerState == ScannerState.LOADING) {
 
             animatedProgress.animateTo(
 
                 targetValue = 0f,
-                animationSpec = tween(durationMillis = 5000, easing = LinearEasing)
+                repeatable(iterations = 2, animation = tween(durationMillis = 4000, easing = LinearEasing))
 
             ).endState.run {
 
-                Log.d("Utility", "animatedProgress : Ended")
-                //TODO take action on complete
+                /**
+                 * This lets us take action after the loading animation has been completed
+                 */
+                actionSetScannerCompletionState?.let {
+                    actionSetScannerCompletionState(ScannerState.COMPLETE)
+                }
+
 
             }
 
@@ -111,12 +116,12 @@ fun SurfaceViewOverlay(
             reticuleBlendMode = BlendMode.SrcOver
         )
 
-        when(scannerState) {
-            ScannerState.SCANNING -> {
+        when (currentScannerState) {
+            ScannerState.SCANNING, null -> {
+
                 scale(
                     scale = infinitelyAnimatedScale
                 ){
-
 
                     drawReticuleShape(
                         reticuleColor = reticuleRipple,
@@ -133,6 +138,7 @@ fun SurfaceViewOverlay(
                 loadingPath(animProgress = animatedProgress, size, density.getBoxSize())
 
             }
+            else -> Unit
         }
 
     }

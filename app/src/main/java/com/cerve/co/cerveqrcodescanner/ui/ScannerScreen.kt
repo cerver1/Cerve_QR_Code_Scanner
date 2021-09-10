@@ -26,12 +26,11 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun ScanQrCodeScreen(
     permissionStatus: PermissionStatus? = PermissionStatus.NEEDS_TO_BE_REQUESTED,
+    currentScannerState: ScannerState? = null,
     actionRequestCameraAndLocationPermission: ((MultiplePermissionsState) -> Unit)? = null,
-    actionScanBarcode: (() -> Unit)? = null,
-    actionScanBarcodeSuccess: (() -> Unit)? = null,
+    scannedBarcodeValue: String? = null,
     actionScannerLoadingResults: ((ScannerState, String) -> Unit)? = null,
-    actionNavigateToSelectFromList: (() -> Unit)? = null,
-    actionNavigateHome: (() -> Unit)? = null,
+    actionSetScannerCompletionState: ((ScannerState) -> Unit)? = null,
 ) {
 
     val doNotShowRationale by rememberSaveable { mutableStateOf(false) }
@@ -54,9 +53,12 @@ fun ScanQrCodeScreen(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
-                    actionScannerLoadingResults = actionScannerLoadingResults
-
+                    currentScannerState = currentScannerState,
+                    actionScannerLoadingResults = actionScannerLoadingResults,
+                    actionSetScannerCompletionState = actionSetScannerCompletionState
                 )
+
+                //TODO display barcode
 
             }
 

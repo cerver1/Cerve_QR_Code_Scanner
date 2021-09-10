@@ -26,7 +26,10 @@ class MainActivity : ComponentActivity() {
 
                 Surface(color = MaterialTheme.colors.background) {
                     ScanQrCodeScreen(
-                        actionScannerLoadingResults = mainViewModel::setScannerStateAndBarcodeValue
+                        scannedBarcodeValue = mainViewModel.barcodeRawValue,
+                        currentScannerState = mainViewModel.scanningState,
+                        actionScannerLoadingResults = mainViewModel::setScannerStateAndBarcodeValue,
+                        actionSetScannerCompletionState = mainViewModel::setScannerState
                     )
                 }
             }

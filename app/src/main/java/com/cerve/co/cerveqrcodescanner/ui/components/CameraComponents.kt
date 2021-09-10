@@ -42,7 +42,9 @@ import java.util.concurrent.Executor
 @Composable
 fun DefaultCameraPreview(
     modifier: Modifier = Modifier,
+    currentScannerState: ScannerState? = null,
     actionScannerLoadingResults: ((ScannerState, String) -> Unit)? = null,
+    actionSetScannerCompletionState: ((ScannerState) -> Unit)? = null
 ) {
 
     //TODO camera provider could be null if the users device doesn't have a camera
@@ -81,16 +83,19 @@ fun DefaultCameraPreview(
         }
 
     )
-//
-//    SurfaceViewOverlay(
-//        modifier = modifier
-//    )
+
+    /**
+     * Could create multiple variations of the overlay and toggle between them
+     * depending on the users selection.
+     */
+
+    SurfaceViewOverlay(
+        modifier = modifier,
+        currentScannerState = currentScannerState,
+        actionSetScannerCompletionState = actionSetScannerCompletionState
+    )
 
 }
-
-
-
-
 
 private fun bindPreview(
     cameraLifecycleOwner: LifecycleOwner,

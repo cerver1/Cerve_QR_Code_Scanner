@@ -18,21 +18,16 @@ object Utils {
     private const val RATIO_4_3_VALUE = 4.0 / 3.0
     private const val RATIO_16_9_VALUE = 16.0 / 9.0
 
-    fun logIt(function: String) {
-//        val thread = "thread ${Thread.currentThread().name}"
-//        Timber.d("$thread | $function : $this")
-    }
-
     fun BarcodeScanner?.stopScanner() {
         if (this != null) {
             try {
                 this.close()
             } catch (e: Exception) {
-                logIt("MLKitBarcodeAnalyzer")
+
             }
         }
-
     }
+
     fun aspectRatio(width: Int, height: Int): Int {
         val previewRatio = max(width, height).toDouble() / min(width, height)
         if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
@@ -59,7 +54,6 @@ object Utils {
 
     }
 
-
     fun IntSize?.retrieveBoxRect(size: Size): RectF {
 
         return this?.let {
@@ -73,11 +67,6 @@ object Utils {
 
             val rightB = ((canvasWidth + boxWidth) / 2)
             val bottomB = ((canvasHeight + boxHeight) / 2)
-
-            Log.d("Utility", "left $leftB")
-            Log.d("Utility", "topB $topB")
-            Log.d("Utility", "rightB $rightB")
-            Log.d("Utility", "bottomB $bottomB")
 
            RectF(leftB,topB,rightB,bottomB)
 
