@@ -5,6 +5,7 @@ import android.graphics.PointF
 import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.cerve.co.cerveqrcodescanner.ui.theme.boxCornerRadius
 import com.cerve.co.cerveqrcodescanner.ui.theme.strokeWidth
+import com.google.android.material.color.MaterialColors
 import kotlin.math.abs
 
 fun DrawScope.drawReticuleShape(
@@ -46,6 +48,7 @@ fun DrawScope.drawReticuleShape(
 
 fun DrawScope.loadingPath(
     animProgress: Animatable<Float, AnimationVector1D>,
+    animColor: Color,
     canvasSize: Size,
     boxSize: Size
 ) {
@@ -120,7 +123,7 @@ fun DrawScope.loadingPath(
 
     drawPath(
         path = path,
-        color = Color.Red,
+        color = animColor,
         style = Stroke(
             width = 4.dp.toPx(),
             pathEffect = PathEffect.cornerPathEffect(8.dp.toPx())),
