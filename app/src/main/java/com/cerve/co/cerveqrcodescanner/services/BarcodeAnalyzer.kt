@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.core.graphics.toRectF
 import com.cerve.co.cerveqrcodescanner.Utils.logIt
 import com.cerve.co.cerveqrcodescanner.models.ScannerState
 import com.google.mlkit.vision.barcode.BarcodeScanner
@@ -32,16 +33,14 @@ class BarcodeAnalyzer(
 
                     if (task.isSuccessful) {
 
-                        Log.d("Utility", "task $task")
+                        val barcodeInCenter = task.result.firstOrNull { barcode ->
 
-//                        val barcodeInCenter = task.result.firstOrNull { barcode ->
-//
-//                            val barcodeBoundingBox = barcode?.boundingBox?.toRectF() ?: return@firstOrNull false
-//                            val box = scannerBoundingBox ?: return@firstOrNull false
-//
-//                            box.intersect(barcodeBoundingBox)
-//
-//                        }
+                            val barcodeBoundingBox = barcode?.boundingBox?.toRectF() ?: return@firstOrNull false
+                            val box = scannerBoundingBox ?: return@firstOrNull false
+
+                            box.intersect(barcodeBoundingBox)
+
+                        }
 
                         /**
                          * When the successListener fires it means that the barcode is in view of the camera.
@@ -49,14 +48,14 @@ class BarcodeAnalyzer(
                          * within a centered 3x2 grid.
                          */
 
-//                        if (barcodeInCenter != null) {
-//
-//                            /***
-//                             * The developer may have specific requirements for a barcode a user
-//                             * will be scanning.
-//                             *
-//                             * Logic for these requirements can be entered below.
-//                             */
+                        if (barcodeInCenter != null) {
+                            Log.d("Utility", "barcodeInCenter $barcodeInCenter")
+                            /***
+                             * The developer may have specific requirements for a barcode a user
+                             * will be scanning.
+                             *
+                             * Logic for these requirements can be entered below.
+                             */
 //                            when(barcodeInCenter.rawValue) {
 //
 //                                is String -> {
@@ -79,12 +78,12 @@ class BarcodeAnalyzer(
 //
 //
 //                            }
-//                        }
+                        }
 
                     }
 
                     /**
-                     *  [imageProxy.close()] is required for iteration per ImageProxy.image
+                     *  [imageProxy.close()] is required for continued processing of each image
                      */
                     imageProxy.close()
 
